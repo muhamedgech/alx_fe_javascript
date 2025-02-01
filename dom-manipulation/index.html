@@ -3,28 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator</title>
+    <title>Dynamic Quote Generator with Sync</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #quoteDisplay {
+            margin: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        select, button, input {
+            padding: 10px;
+            margin: 10px;
+        }
+
+        #quoteFormContainer {
+            margin-top: 20px;
+        }
+
+        .notification {
+            background-color: #ffcc00;
+            padding: 10px;
+            margin-top: 20px;
+            color: white;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Dynamic Quote Generator</h1>
-    
+
+    <h1>Dynamic Quote Generator with Sync</h1>
+
     <!-- Category Filter Dropdown -->
     <label for="categoryFilter">Filter by Category:</label>
-    <select id="categoryFilter" onchange="filterQuote()">
+    <select id="categoryFilter">
         <option value="all">All Categories</option>
-        <!-- Categories will be populated dynamically by JavaScript -->
+        <!-- Categories will be populated dynamically -->
     </select>
 
-    <!-- Quote Display Section -->
-    <div id="quoteDisplay"></div>
+    <!-- Display Quote -->
+    <div id="quoteDisplay">
+        <!-- A random quote will be displayed here -->
+    </div>
 
-    <!-- Buttons for Adding Quote, Exporting, and Importing Quotes -->
-    <button id="newQuote">Show New Quote</button>
-    <button id="exportQuotes">Export Quotes</button>
+    <!-- Button to show a new quote -->
+    <button id="newQuote">Show Random Quote</button>
 
-    <!-- File Input for Importing Quotes -->
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    <!-- Form to add new quotes -->
+    <div id="quoteFormContainer">
+        <input type="text" id="newQuoteText" placeholder="Enter a new quote">
+        <input type="text" id="newQuoteCategory" placeholder="Enter quote category">
+        <button onclick="addQuote()">Add Quote</button>
+        <button onclick="exportQuotes()">Export Quotes</button>
+        <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)">
+    </div>
 
-    <script src="script.js"></script>
+    <!-- Notification for sync and conflict resolution -->
+    <div id="syncNotification" class="notification">
+        <p>Server data updated! Local changes have been overridden.</p>
+        <button id="resolveConflictBtn">Resolve Conflict</button>
+    </div>
+
+    <script src="app.js"></script> <!-- Link to the external JavaScript file -->
 </body>
 </html>
