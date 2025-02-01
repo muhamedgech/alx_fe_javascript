@@ -1,60 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Load quotes from localStorage or use default quotes
     let quotes = JSON.parse(localStorage.getItem("quotes")) || [
         { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
         { text: "Do what you can, with what you have, where you are.", category: "Inspiration" },
         { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Life" }
     ];
 
+    // DOM elements
     const quoteDisplay = document.getElementById("quoteDisplay");
     const newQuoteButton = document.getElementById("newQuote");
     const categoryFilter = document.getElementById("categoryFilter");
-    const syncNotification = document.getElementById("syncNotification");
-    const resolveConflictBtn = document.getElementById("resolveConflictBtn");
-
-    // Simulate server URL (JSONPlaceholder or similar mock API)
-    const serverUrl = "https://jsonplaceholder.typicode.com/posts/1"; // This is just a mock
 
     // Save quotes to localStorage
     function saveQuotes() {
         localStorage.setItem("quotes", JSON.stringify(quotes));
     }
-
-    // Fetch quotes from the server and sync with local data
-    async function syncWithServer() {
-        try {
-            const response = await fetch(serverUrl);
-            const serverData = await response.json();
-
-            // Simulate server having updated data
-            const serverQuotes = [
-                { text: "New quote from server.", category: "Motivation" },
-                { text: "Updated quote on server.", category: "Inspiration" }
-            ];
-
-            // Check for conflict (simplified comparison)
-            if (JSON.stringify(quotes) !== JSON.stringify(serverQuotes)) {
-                // Handle conflict: Server data takes precedence
-                quotes = serverQuotes;
-                saveQuotes();
-                showSyncNotification();
-            }
-
-        } catch (error) {
-            console.error("Error syncing with server:", error);
-        }
-    }
-
-    // Show notification when sync happens
-    function showSyncNotification() {
-        syncNotification.style.display = "block";
-    }
-
-    // Resolve conflict manually
-    resolveConflictBtn.addEventListener("click", () => {
-        // Here you can implement logic to resolve conflicts manually if desired.
-        // For now, we just hide the notification.
-        syncNotification.style.display = "none";
-    });
 
     // Show a random quote from the filtered list
     function showRandomQuote() {
@@ -89,39 +49,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Export quotes as a JSON file
-    function exportQuotes() {
-        const dataStr = JSON.stringify(quotes, null, 2);
-        const blob = new Blob([dataStr], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "quotes.json";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
+    // Create the form for adding quotes
+    function createAddQuoteForm() {
+        const formContainer = document.createElement("div");
+        formContainer.id = "quoteFormContainer";
 
-    // Import quotes from a JSON file
-    function importFromJsonFile(event) {
-        const fileReader = new FileReader();
-        fileReader.onload = function(event) {
-            try {
-                const importedQuotes = JSON.parse(event.target.result);
-                if (Array.isArray(importedQuotes)) {
-                    quotes.push(...importedQuotes);
-                    saveQuotes();
-                    alert("Quotes imported successfully!");
-                    showRandomQuote();
-                    populateCategories(); // Re-populate categories after importing
-                } else {
-                    alert("Invalid file format.");
-                }
-            } catch (error) {
-                alert("Error reading file.");
-            }
-        };
-        fileReader.readAsText(event.target.files[0]);
+        const quoteInput = document.createElement("input");
+        quoteInput.id = "newQuoteText";
+        quoteInput.type = "text";
+        quoteInput.placeholder = "Enter a new quote";
+
+        const categoryInput = document.createElement("input");
+        categoryInput.id = "newQuoteCategory";
+        categoryInput.type = "text";
+        categoryInput.placeholder = "Enter quote category";
+
+        const addButton = document.createElement("button");
+        addButton.textContent = "Add Quote";
+        addButton.addEventListener("click", addQuote);
+
+        formContainer.appendChild(quoteInput);
+        formContainer.appendChild(categoryInput);
+        formContainer.appendChild(addButton);
+        document.body.appendChild(formContainer);
     }
 
     // Populate the category filter dropdown dynamically
@@ -152,10 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function init() {
         populateCategories(); // Populate category filter dropdown
         newQuoteButton.addEventListener("click", showRandomQuote); // Button to show random quote
+        createAddQuoteForm(); // Create the form to add quotes
         showRandomQuote(); // Show a random quote on page load
-
-        // Periodic sync with the server
-        setInterval(syncWithServer, 30000); // Sync every 30 seconds
     }
 
     init(); // Call the init function when the DOM is ready
