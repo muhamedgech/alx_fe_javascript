@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
         const quote = filteredQuotes[randomIndex];
         quoteDisplay.innerHTML = `<p>"${quote.text}"</p><p><strong>Category:</strong> ${quote.category}</p>`;
-        sessionStorage.setItem("lastQuote", JSON.stringify(quote));
+        sessionStorage.setItem("lastQuote", JSON.stringify(quote));  // Save the last shown quote
     }
 
     // Add a new quote to the quotes array
@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("newQuoteText").value = "";
             document.getElementById("newQuoteCategory").value = "";
             showRandomQuote();
+            populateCategories(); // Re-populate the category dropdown after adding a new quote
         } else {
             alert("Please enter both a quote and a category.");
         }
@@ -122,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Populate the category filter dropdown dynamically
     function populateCategories() {
         const categories = new Set(quotes.map(quote => quote.category)); // Get unique categories
-        const categoryFilter = document.getElementById("categoryFilter");
         categoryFilter.innerHTML = '<option value="all">All Categories</option>'; // Reset to 'All Categories'
 
         categories.forEach(category => {
