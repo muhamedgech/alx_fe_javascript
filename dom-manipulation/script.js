@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const randomIndex = Math.floor(Math.random() * quotes.length);
         const quote = quotes[randomIndex];
-        quoteDisplay.textContent = `"${quote.text}" - (${quote.category})`;
+        quoteDisplay.innerHTML = `<p>"${quote.text}"</p><p><strong>Category:</strong> ${quote.category}</p>`;
     }
 
     function addQuote() {
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
             quotes.push({ text: newQuoteText, category: newQuoteCategory });
             document.getElementById("newQuoteText").value = "";
             document.getElementById("newQuoteCategory").value = "";
-            alert("Quote added successfully!");
+            showRandomQuote();
         } else {
             alert("Please enter both a quote and a category.");
         }
@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function createAddQuoteForm() {
         const formContainer = document.createElement("div");
+        formContainer.id = "quoteFormContainer";
 
         const quoteInput = document.createElement("input");
         quoteInput.id = "newQuoteText";
