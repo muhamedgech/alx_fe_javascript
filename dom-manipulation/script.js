@@ -1,10 +1,42 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Load quotes from localStorage or use default quotes
-    let quotes = JSON.parse(localStorage.getItem("quotes")) || [
-        { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
-        { text: "Do what you can, with what you have, where you are.", category: "Inspiration" },
-        { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Life" }
-    ];
+    // Fetch quotes from server or use localStorage quotes
+    function fetchQuotesFromServer() {
+        // Replace with the URL of your server or API endpoint
+        const url = "https://api.example.com/quotes";  // Change this to your API
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    quotes = data; // If server returns quotes as an array, use it
+                    saveQuotes(); // Optionally, save fetched quotes to localStorage
+                    showRandomQuote(); // Show a random quote after fetching
+                    populateCategories(); // Re-populate categories after fetching
+                } else {
+                    console.error("Server response is not in expected format.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching quotes:", error);
+                // Fall back to localStorage or default quotes if fetching fails
+                quotes = JSON.parse(localStorage.getItem("quotes")) || [
+                    { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
+                    { text: "Do what you can, with what you have, where you are.", category: "Inspiration" },
+                    { text: "Life is 10% what happens to us and 90% how we react to it.", category: "Life" }
+                ];
+                showRandomQuote(); // Show a random quote after loading from fallback
+                populateCategories(); // Re-populate categories if fallback is used
+            });
+    }
+
+    // Load quotes from localStorage or fallback to the server fetch
+    let quotes = JSON.parse(localStorage.getItem("quotes")) || [];
+    if (quotes.length === 0) {
+        fetchQuotesFromServer(); // Fetch quotes from the server if localStorage is empty
+    } else {
+        showRandomQuote(); // Show a random quote from localStorage if available
+        populateCategories(); // Populate categories from localStorage
+    }
 
     // DOM elements
     const quoteDisplay = document.getElementById("quoteDisplay");
@@ -49,31 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Create the form for adding quotes
-    function createAddQuoteForm() {
-        const formContainer = document.createElement("div");
-        formContainer.id = "quoteFormContainer";
-
-        const quoteInput = document.createElement("input");
-        quoteInput.id = "newQuoteText";
-        quoteInput.type = "text";
-        quoteInput.placeholder = "Enter a new quote";
-
-        const categoryInput = document.createElement("input");
-        categoryInput.id = "newQuoteCategory";
-        categoryInput.type = "text";
-        categoryInput.placeholder = "Enter quote category";
-
-        const addButton = document.createElement("button");
-        addButton.textContent = "Add Quote";
-        addButton.addEventListener("click", addQuote);
-
-        formContainer.appendChild(quoteInput);
-        formContainer.appendChild(categoryInput);
-        formContainer.appendChild(addButton);
-        document.body.appendChild(formContainer);
-    }
-
     // Populate the category filter dropdown dynamically
     function populateCategories() {
         const categories = new Set(quotes.map(quote => quote.category)); // Get unique categories
@@ -102,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function init() {
         populateCategories(); // Populate category filter dropdown
         newQuoteButton.addEventListener("click", showRandomQuote); // Button to show random quote
-        createAddQuoteForm(); // Create the form to add quotes
         showRandomQuote(); // Show a random quote on page load
     }
 
