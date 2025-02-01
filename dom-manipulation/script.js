@@ -243,6 +243,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         createAddQuoteForm(); // Create the form to add quotes
         newQuoteButton.addEventListener("click", showRandomQuote); // Button to show random quote
+
+        // Sync quotes every 10 minutes (600,000 ms)
+        setInterval(syncQuotes, 600000);  // Periodically sync with the server
     }
 
     init(); // Call the init function when the DOM is ready
