@@ -68,6 +68,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Synchronize local quotes with the server (fetch or send)
+    async function syncQuotes() {
+        const url = "https://jsonplaceholder.typicode.com/posts"; // The endpoint to fetch posts
+
+        try {
+            const response = await fetch(url);
+            const serverQuotes = await response.json();
+
+            if (Array.isArray(serverQuotes)) {
+                // Update local quotes with server data (could also merge, depending on logic)
+                const serverQuoteIds = serverQuotes.map(quote => quote.id);
+                const localQuoteIds = quotes.map(quote => quote.id);
+
+                // Send local quotes that aren't on the server
+                const newQuotes = quotes.filter(quote => !serverQuoteIds.includes(quote.id));
+                for (const newQuote of newQuotes) {
+                    await sendQuoteToServer(newQuote);  // Send to server if not already present
+                }
+
+                // Update localStorage with the latest quotes
+                quotes = [...serverQuotes, ...newQuotes];
+                saveQuotes();
+                console.log("Synchronization complete!");
+                showRandomQuote();
+                populateCategories();
+            } else {
+                console.error("Invalid data from the server");
+            }
+        } catch (error) {
+            console.error("Error syncing quotes:", error);
+        }
+    }
+
     // Show a random quote from the filtered list
     function showRandomQuote() {
         const selectedCategory = categoryFilter.value;
