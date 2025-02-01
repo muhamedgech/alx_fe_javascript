@@ -44,6 +44,30 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Send a new quote to the server using a POST request
+    async function sendQuoteToServer(quote) {
+        const url = "https://jsonplaceholder.typicode.com/posts"; // The endpoint where we send the new quote
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",  // HTTP method
+                headers: {
+                    "Content-Type": "application/json"  // Setting the content type as JSON
+                },
+                body: JSON.stringify(quote)  // Convert the quote object to JSON string
+            });
+
+            if (response.ok) {
+                console.log("Quote sent successfully!");
+                // You can do something with the response if needed
+            } else {
+                console.error("Failed to send the quote.");
+            }
+        } catch (error) {
+            console.error("Error sending quote:", error);
+        }
+    }
+
     // Show a random quote from the filtered list
     function showRandomQuote() {
         const selectedCategory = categoryFilter.value;
@@ -90,8 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const newQuoteCategory = document.getElementById("newQuoteCategory").value.trim();
 
         if (newQuoteText && newQuoteCategory) {
-            quotes.push({ text: newQuoteText, category: newQuoteCategory });
+            const newQuote = { text: newQuoteText, category: newQuoteCategory };
+            quotes.push(newQuote);
             saveQuotes();
+            sendQuoteToServer(newQuote);  // Send the new quote to the server
             document.getElementById("newQuoteText").value = "";
             document.getElementById("newQuoteCategory").value = "";
             showRandomQuote();
