@@ -91,6 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 quotes = [...serverQuotes, ...newQuotes];
                 saveQuotes();
                 console.log("Synchronization complete!");
+
+                // Notify user that quotes were synced successfully
+                alert("Quotes synced with server!");
+
                 showRandomQuote();
                 populateCategories();
             } else {
